@@ -76,8 +76,21 @@ public class Main {
 
         while (true) {
 
-            System.out.print("Digite o nome: ");
+            System.out.print("Digite o nome ou digite SAIR para cancelar: ");
             usuario.nome = scanner.nextLine();
+
+            if (usuario.nome.equals("SAIR")) {
+
+                System.out.print("Tem certeza que deseja sair do cadastro? (S/N): ");
+                String confirmacao = scanner.nextLine();
+
+                if (confirmacao.equalsIgnoreCase("S")) {
+                    System.out.println("Cadastro cancelado.");
+                    return false;
+                }
+
+                continue;
+            }
 
             if (validarNome(usuario.nome)) {
                 break;
