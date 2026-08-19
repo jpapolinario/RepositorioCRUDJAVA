@@ -1,14 +1,18 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.ArrayList; // importa a arraylist para criar listas que podem crescer, usa para guardar vários usuarios cadastrados
+import java.util.Scanner; // importa o Scanner, uma classe que le o que a pessoa digita
+import java.time.LocalDate;
+import java.time.Period;
 
-public class Main {
+public class Main { // cria a classe principal do programa, chamada main
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in); // cria um objeto scanner, capaz de ler o tecclado, new Scanner cria o
+                                                  // leitor, system.in representa a entrada
 
-        ArrayList<Usuario> usuarios = new ArrayList<>(); // você tá criando uma lista chamada usuarios e essa lista só
-                                                         // pode armazenar objetos do tipo Usuario
+        ArrayList<Usuario> usuarios = new ArrayList<>(); // você tá criando uma lista chamada usuarios e o trecho
+                                                         // <Usuario> diz que ela só pode armazenar objetos do tipo
+                                                         // Usuario
 
         int proximoId = 1;
 
@@ -79,12 +83,12 @@ public class Main {
             System.out.print("Digite o nome ou digite SAIR para cancelar: ");
             usuario.nome = scanner.nextLine();
 
-            if (usuario.nome.equals("SAIR")) {
+            if (usuario.nome.equals("SAIR")) { // equals compara textos
 
                 System.out.print("Tem certeza que deseja sair do cadastro? (S/N): ");
                 String confirmacao = scanner.nextLine();
 
-                if (confirmacao.equalsIgnoreCase("S")) {
+                if (confirmacao.equalsIgnoreCase("S")) {// ignoreCase ignora se é maiuscula ou minuscula
                     System.out.println("Cadastro cancelado.");
                     return false;
                 }
@@ -99,20 +103,12 @@ public class Main {
             System.out.println("Nome inválido. Digite novamente.");
         }
 
-        System.out.print("Digite a data de nascimento: ");
+        System.out.print("Digite a data de nascimento (dd/MM/aaaa): ");
         usuario.dataNascimento = scanner.nextLine();
 
-        System.out.print("Digite a idade: ");
-        int idade = scanner.nextInt();
+        usuario.idade = calcularIdade(usuario.dataNascimento);
 
-        if (!validarIdade(idade)) {
-            System.out.println("Idade inválida.");
-            return false;
-        }
-
-        usuario.idade = idade;
-
-        scanner.nextLine();
+        System.out.println("Idade: " + usuario.idade);
 
         System.out.print("Digite o CPF: ");
         usuario.cpf = scanner.nextLine();
@@ -167,7 +163,8 @@ public class Main {
 
         mostrarQuantidadeUsuarios(usuarios);
 
-        for (Usuario usuarioCadastrado : usuarios) {
+        for (Usuario usuarioCadastrado : usuarios) { // para cada Usuario existente dentro da lista usuarios, coloque
+                                                     // temporariamente esse usuário na variável usuarioCadastrado
             System.out.println("ID: " + usuarioCadastrado.id);
             System.out.println("Nome: " + usuarioCadastrado.nome);
             System.out.println("Idade: " + usuarioCadastrado.idade);
@@ -183,8 +180,7 @@ public class Main {
             System.out.println("ID: " + usuarioCadastrado.id + ", Nome: " + usuarioCadastrado.nome);
         }
 
-        System.out.println("Digite o ID do usuário que deseja excluir.");
-        System.out.println("Digite 0 para cancelar.");
+        System.out.println("Digite o ID do usuário que deseja excluir ou 0 para cancelar.");
 
         int idExcluir = scanner.nextInt();
 
@@ -197,7 +193,8 @@ public class Main {
 
         for (int i = 0; i < usuarios.size(); i++) {
 
-            if (usuarios.get(i).id == idExcluir) {
+            if (usuarios.get(i).id == idExcluir) {// usuarios.get(i).id pega o usuario que esta na posição i e acessa o
+                                                  // id dele
                 posicaoUsuario = i;
                 break;
             }
@@ -226,13 +223,13 @@ public class Main {
 
     static boolean validarNome(String nome) {
 
-        if (nome.trim().isEmpty()) {
+        if (nome.trim().isEmpty()) { // isEmpty ve se ficou vazio
             return false;
         }
 
         for (int i = 0; i < nome.length(); i++) { // percorrendo pelo nome inteiro
 
-            char caractere = nome.charAt(i);
+            char caractere = nome.charAt(i); // pega o caractere dessa posição
 
             if (!Character.isLetter(caractere) && caractere != ' ') {
                 return false;
@@ -244,13 +241,13 @@ public class Main {
 
     static boolean validarCpf(String cpf) {
 
-        cpf = cpf.replaceAll("\\D", "");
+        cpf = cpf.replaceAll("\\D", ""); // remove tudo que nao for numero e substitui por nada
 
         if (cpf.length() != 11) {
             return false;
         }
 
-        if (cpf.matches("(\\d)\\1{10}")) {
+        if (cpf.matches("(\\d)\\1{10}")) { // impede todos numeros iguais
             return false;
         }
 
@@ -304,5 +301,19 @@ public class Main {
         }
 
         return false;
+    }
+
+    static int calcularIdade(String dataNAscimento) {
+
+        String[] partes = dataNAscimento.split("/"); // pq as []?
+
+        int dia = Integer.parseInt(partes[0]);// Integer? .parseInt?
+        int mes = Integer.parseInt(partes[1]);
+        int ano = Integer.parseInt(partes[2]);
+
+        LocalDate nascimento = LocalDate.of(ano, mes, dia);
+        LocalDate hoje = LocalDate.now();
+
+        return Period.between(nascimento, hoje).getYears();
     }
 }

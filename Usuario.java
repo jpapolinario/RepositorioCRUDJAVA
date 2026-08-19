@@ -1,4 +1,4 @@
-public class Usuario {
+public class Usuario { // cria uma classe chamada usuário, cria o modelo das informações do usuário
 
     int id;
     String nome;
@@ -16,3 +16,5 @@ public class Usuario {
     String email;
 
 }
+// quando o código faz: Usuario usuario = new Usuario(); ele cria uma nova ficha
+// de usuário, com todos esses campos disponíveis
