@@ -184,15 +184,20 @@ public class Main { // cria a classe principal do programa, chamada main
 
         usuario.estadoCivil = estadoCivil;
 
-        String conjuge = lerCampo(scanner, "Digite o nome do cônjuge: ");
+        if (estadoCivil.equalsIgnoreCase("casado")) {
 
-        if (conjuge == null) {
-            System.out.println("Cadastro cancelado.");
-            return false;
+            String conjuge = lerCampo(scanner, "Digite o nome do cônjuge: ");
+
+            if (conjuge == null) {
+                System.out.println("Cadastro cancelado.");
+                return false;
+            }
+
+            usuario.conjuge = conjuge;
+
+        } else {
+            usuario.conjuge = "";
         }
-
-        usuario.conjuge = conjuge;
-
         String endereco = lerCampo(scanner, "Digite o endereço: ");
 
         if (endereco == null) {
@@ -396,15 +401,20 @@ public class Main { // cria a classe principal do programa, chamada main
 
         usuarioEncontrado.estadoCivil = estadoCivil;
 
-        String conjuge = lerCampo(scanner, "Digite o novo nome do cônjuge: ");
+        if (estadoCivil.equalsIgnoreCase("casado")) {
 
-        if (conjuge == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+            String conjuge = lerCampo(scanner, "Digite o novo nome do cônjuge: ");
+
+            if (conjuge == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            usuarioEncontrado.conjuge = conjuge;
+
+        } else {
+            usuarioEncontrado.conjuge = "";
         }
-
-        usuarioEncontrado.conjuge = conjuge;
-
         String endereco = lerCampo(scanner, "Digite o novo endereço: ");
 
         if (endereco == null) {
