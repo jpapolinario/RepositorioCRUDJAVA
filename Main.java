@@ -1,7 +1,7 @@
 import java.util.ArrayList; // importa a arraylist para criar listas que podem crescer, usa para guardar vários usuarios cadastrados
 import java.util.Scanner; // importa o Scanner, uma classe que le o que a pessoa digita
-import java.time.LocalDate;
-import java.time.Period;
+import java.time.LocalDate; // guarda uma data pura
+import java.time.Period; // serve para medir a distância de tempo entre duas datas
 
 public class Main { // cria a classe principal do programa, chamada main
 
@@ -27,6 +27,7 @@ public class Main { // cria a classe principal do programa, chamada main
             System.out.println("1. Cadastrar");
             System.out.println("2. Listar");
             System.out.println("3. Excluir");
+            System.out.println("4. Atualizar");
             System.out.println("0. Sair");
 
             System.out.print("Escolha uma opção: ");
@@ -49,6 +50,10 @@ public class Main { // cria a classe principal do programa, chamada main
 
                 case 3:
                     excluirUsuario(scanner, usuarios);
+                    break;
+
+                case 4:
+                    atualizarUsuario(scanner, usuarios);
                     break;
 
                 case 0:
@@ -78,77 +83,185 @@ public class Main { // cria a classe principal do programa, chamada main
 
         scanner.nextLine();
 
+        System.out.println("\n===== CADASTRO DE USUÁRIO =====");
+        System.out.println("Campos obrigatórios:");
+        System.out.println("- Nome");
+        System.out.println("- Data de nascimento");
+        System.out.println("- CPF");
+        System.out.println("- Sexo");
+        System.out.println("- Estado civil");
+        System.out.println("- Nome do cônjuge");
+        System.out.println("- Endereço");
+        System.out.println("- CEP");
+        System.out.println("- Cidade");
+        System.out.println("- Estado");
+        System.out.println("- Complemento");
+        System.out.println("- E-mail");
+        System.out.println("\nDigite SAIR em qualquer campo para cancelar o cadastro.");
+        System.out.println("==============================");
+
         while (true) {
 
-            System.out.print("Digite o nome ou digite SAIR para cancelar: ");
-            usuario.nome = scanner.nextLine();
+            String nome = lerCampo(scanner, "Digite o nome: ");
 
-            if (usuario.nome.equals("SAIR")) { // equals compara textos
-
-                System.out.print("Tem certeza que deseja sair do cadastro? (S/N): ");
-                String confirmacao = scanner.nextLine();
-
-                if (confirmacao.equalsIgnoreCase("S")) {// ignoreCase ignora se é maiuscula ou minuscula
-                    System.out.println("Cadastro cancelado.");
-                    return false;
-                }
-
-                continue;
+            if (nome == null) {
+                System.out.println("Cadastro cancelado.");
+                return false;
             }
 
-            if (validarNome(usuario.nome)) {
+            if (validarNome(nome)) {
+                usuario.nome = nome;
                 break;
             }
 
             System.out.println("Nome inválido. Digite novamente.");
         }
 
-        System.out.print("Digite a data de nascimento (dd/MM/aaaa): ");
-        usuario.dataNascimento = scanner.nextLine();
+        while (true) {
+
+            String dataNascimento = lerCampo(scanner, "Digite a data de nascimento (dd/MM/aaaa): ");
+
+            if (dataNascimento == null) {
+                System.out.println("Cadastro cancelado.");
+                return false;
+            }
+
+            if (validarDataNascimento(dataNascimento)) {
+                usuario.dataNascimento = dataNascimento;
+                break;
+            }
+
+            System.out.println("Data inválida. Digite novamente.");
+        }
 
         usuario.idade = calcularIdade(usuario.dataNascimento);
 
         System.out.println("Idade: " + usuario.idade);
 
-        System.out.print("Digite o CPF: ");
-        usuario.cpf = scanner.nextLine();
+        while (true) {
 
-        if (!validarCpf(usuario.cpf)) {
-            System.out.println("CPF inválido.");
+            String cpf = lerCampo(scanner, "Digite o CPF: ");
+
+            if (cpf == null) {
+                System.out.println("Cadastro cancelado.");
+                return false;
+            }
+
+            if (!validarCpf(cpf)) {
+                System.out.println("CPF inválido. Digite novamente.");
+                continue;
+            }
+
+            if (cpfJaExiste(cpf, usuarios)) {
+                System.out.println("Este CPF já está cadastrado.");
+                continue;
+            }
+
+            usuario.cpf = cpf;
+            break;
+        }
+
+        while (true) {
+
+            String sexo = lerCampo(scanner, "Digite o sexo: ");
+
+            if (sexo == null) {
+                System.out.println("Cadastro cancelado.");
+                return false;
+            }
+
+            usuario.sexo = sexo;
+            break;
+
+        }
+
+        String estadoCivil = lerCampo(scanner, "Digite o estado civil: ");
+
+        if (estadoCivil == null) {
+            System.out.println("Cadastro cancelado.");
             return false;
         }
 
-        if (cpfJaExiste(usuario.cpf, usuarios)) {
-            System.out.println("Este CPF já está cadastrado.");
+        usuario.estadoCivil = estadoCivil;
+
+        String conjuge = lerCampo(scanner, "Digite o nome do cônjuge: ");
+
+        if (conjuge == null) {
+            System.out.println("Cadastro cancelado.");
             return false;
         }
 
-        System.out.print("Digite o sexo: ");
-        usuario.sexo = scanner.nextLine();
+        usuario.conjuge = conjuge;
 
-        System.out.print("Digite o estado civil: ");
-        usuario.estadoCivil = scanner.nextLine();
+        String endereco = lerCampo(scanner, "Digite o endereço: ");
 
-        System.out.print("Digite o nome do cônjuge: ");
-        usuario.conjuge = scanner.nextLine();
+        if (endereco == null) {
+            System.out.println("Cadastro cancelado.");
+            return false;
+        }
 
-        System.out.print("Digite o endereço: ");
-        usuario.endereco = scanner.nextLine();
+        usuario.endereco = endereco;
 
-        System.out.print("Digite o CEP: ");
-        usuario.cep = scanner.nextLine();
+        while (true) {
 
-        System.out.print("Digite a cidade: ");
-        usuario.cidade = scanner.nextLine();
+            String cep = lerCampo(scanner, "Digite o CEP: ");
 
-        System.out.print("Digite o estado: ");
-        usuario.estado = scanner.nextLine();
+            if (cep == null) {
+                System.out.println("Cadastro cancelado.");
+                return false;
+            }
 
-        System.out.print("Digite o complemento: ");
-        usuario.complemento = scanner.nextLine();
+            if (validarCep(cep)) {
+                usuario.cep = cep;
+                break;
+            }
 
-        System.out.print("Digite o e-mail: ");
-        usuario.email = scanner.nextLine();
+            System.out.println("CEP inválido. Digite novamente.");
+        }
+
+        String cidade = lerCampo(scanner, "Digite a cidade: ");
+
+        if (cidade == null) {
+            System.out.println("Cadastro cancelado.");
+            return false;
+        }
+
+        usuario.cidade = cidade;
+
+        String estado = lerCampo(scanner, "Digite o estado: ");
+
+        if (estado == null) {
+            System.out.println("Cadastro cancelado.");
+            return false;
+        }
+
+        usuario.estado = estado;
+
+        String complemento = lerCampo(scanner, "Digite o complemento: ");
+
+        if (complemento == null) {
+            System.out.println("Cadastro cancelado.");
+            return false;
+        }
+
+        usuario.complemento = complemento;
+
+        while (true) {
+
+            String email = lerCampo(scanner, "Digite o e-mail: ");
+
+            if (email == null) {
+                System.out.println("Cadastro cancelado.");
+                return false;
+            }
+
+            if (validarEmail(email)) {
+                usuario.email = email;
+                break;
+            }
+
+            System.out.println("E-mail inválido. Digite novamente.");
+        }
 
         usuarios.add(usuario);
 
@@ -212,13 +325,185 @@ public class Main { // cria a classe principal do programa, chamada main
         }
     }
 
-    static boolean validarIdade(int idade) {
+    static void atualizarUsuario(Scanner scanner, ArrayList<Usuario> usuarios) {
 
-        if (idade < 0 || idade > 122) {
-            return false;
+        System.out.println("\n===== ATUALIZAR USUÁRIO =====");
+
+        if (usuarios.isEmpty()) {
+            System.out.println("Não existem usuários cadastrados.");
+            return;
         }
 
-        return true;
+        for (Usuario usuario : usuarios) {
+            System.out.println("ID: " + usuario.id + ", Nome: " + usuario.nome);
+        }
+
+        System.out.print("Digite o ID do usuário que deseja atualizar ou 0 para cancelar: ");
+        int idAtualizar = scanner.nextInt();
+        scanner.nextLine(); // pega o enter
+
+        if (idAtualizar == 0) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        Usuario usuarioEncontrado = null;
+
+        for (Usuario usuario : usuarios) {
+
+            if (usuario.id == idAtualizar) {
+                usuarioEncontrado = usuario;
+                break;
+            }
+        }
+
+        if (usuarioEncontrado == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+
+        System.out.println("\nUsuário encontrado: " + usuarioEncontrado.nome);
+
+        String nome = lerCampo(scanner, "Digite o novo nome: ");
+
+        if (nome == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        if (!validarNome(nome)) {
+            System.out.println("Nome inválido. Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.nome = nome;
+
+        String sexo = lerCampo(scanner, "Digite o novo sexo: ");
+
+        if (sexo == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.sexo = sexo;
+
+        String estadoCivil = lerCampo(scanner, "Digite o novo estado civil: ");
+
+        if (estadoCivil == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.estadoCivil = estadoCivil;
+
+        String conjuge = lerCampo(scanner, "Digite o novo nome do cônjuge: ");
+
+        if (conjuge == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.conjuge = conjuge;
+
+        String endereco = lerCampo(scanner, "Digite o novo endereço: ");
+
+        if (endereco == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.endereco = endereco;
+
+        String cep = lerCampo(scanner, "Digite o novo CEP: ");
+
+        if (cep == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        if (!validarCep(cep)) {
+            System.out.println("CEP inválido. Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.cep = cep;
+
+        String cidade = lerCampo(scanner, "Digite a nova cidade: ");
+
+        if (cidade == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.cidade = cidade;
+
+        String estado = lerCampo(scanner, "Digite o novo estado: ");
+
+        if (estado == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.estado = estado;
+
+        String complemento = lerCampo(scanner, "Digite o novo complemento: ");
+
+        if (complemento == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.complemento = complemento;
+
+        String email = lerCampo(scanner, "Digite o novo e-mail: ");
+
+        if (email == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        if (!validarEmail(email)) {
+            System.out.println("E-mail inválido. Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.email = email;
+
+        String dataNascimento = lerCampo(scanner, "Digite a nova data de nascimento (dd/MM/aaaa): ");
+
+        if (dataNascimento == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        if (!validarDataNascimento(dataNascimento)) {
+            System.out.println("Data inválida. Atualização cancelada.");
+            return;
+        }
+
+        usuarioEncontrado.dataNascimento = dataNascimento;
+        usuarioEncontrado.idade = calcularIdade(dataNascimento);
+
+        String cpf = lerCampo(scanner, "Digite o novo CPF: ");
+
+        if (cpf == null) {
+            System.out.println("Atualização cancelada.");
+            return;
+        }
+
+        if (!validarCpf(cpf)) {
+            System.out.println("CPF inválido. Atualização cancelada.");
+            return;
+        }
+
+        if (cpfJaExisteEmOutroUsuario(cpf, usuarios, usuarioEncontrado.id)) {
+            System.out.println("Este CPF já pertence a outro usuário.");
+            return;
+        }
+
+        usuarioEncontrado.cpf = cpf;
+
+        System.out.println("Usuário atualizado com sucesso!");
     }
 
     static boolean validarNome(String nome) {
@@ -305,9 +590,9 @@ public class Main { // cria a classe principal do programa, chamada main
 
     static int calcularIdade(String dataNAscimento) {
 
-        String[] partes = dataNAscimento.split("/"); // pq as []?
+        String[] partes = dataNAscimento.split("/");
 
-        int dia = Integer.parseInt(partes[0]);// Integer? .parseInt?
+        int dia = Integer.parseInt(partes[0]);
         int mes = Integer.parseInt(partes[1]);
         int ano = Integer.parseInt(partes[2]);
 
@@ -315,5 +600,93 @@ public class Main { // cria a classe principal do programa, chamada main
         LocalDate hoje = LocalDate.now();
 
         return Period.between(nascimento, hoje).getYears();
+    }
+
+    static boolean validarDataNascimento(String data) {
+
+        if (!data.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            return false;
+        }
+
+        try { // tente executar este bloco
+            String[] partes = data.split("/");
+
+            int dia = Integer.parseInt(partes[0]);
+            int mes = Integer.parseInt(partes[1]);
+            int ano = Integer.parseInt(partes[2]);
+
+            LocalDate nascimento = LocalDate.of(ano, mes, dia);
+
+            if (nascimento.isAfter(LocalDate.now())) {
+                return false;
+            }
+
+            return true;
+
+        } catch (Exception e) { // se algo der errado faça isso
+            return false;
+        }
+    }
+
+    static String lerCampo(Scanner scanner, String mensagem) {
+
+        System.out.print(mensagem);
+        String valor = scanner.nextLine();
+
+        if (valor.equals("SAIR")) {
+
+            System.out.print("Tem certeza que deseja sair do cadastro? (S/N): ");
+            String confirmacao = scanner.nextLine();
+
+            if (confirmacao.equalsIgnoreCase("S")) {
+                return null;
+            }
+        }
+
+        return valor;
+    }
+
+    static boolean validarCep(String cep) {
+
+        cep = cep.replaceAll("\\D", "");
+
+        if (cep.length() != 8) {
+            return false;
+        }
+
+        return true;
+    }
+
+    static boolean validarEmail(String email) {
+
+        if (email.trim().isEmpty()) {
+            return false;
+        }
+
+        if (!email.contains("@")) {
+            return false;
+        }
+
+        if (!email.contains(".")) {
+            return false;
+        }
+
+        return true;
+    }
+
+    static boolean cpfJaExisteEmOutroUsuario(String cpf, ArrayList<Usuario> usuarios, int idAtual) {
+
+        cpf = cpf.replaceAll("\\D", "");
+
+        for (Usuario usuario : usuarios) {
+
+            String cpfUsuario = usuario.cpf.replaceAll("\\D", "");
+
+            if (usuario.id != idAtual && cpfUsuario.equals(cpf)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
