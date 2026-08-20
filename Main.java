@@ -90,7 +90,7 @@ public class Main { // cria a classe principal do programa, chamada main
         System.out.println("- CPF");
         System.out.println("- Sexo");
         System.out.println("- Estado civil");
-        System.out.println("- Nome do cônjuge");
+        System.out.println("- Nome do cônjuge (se casado)");
         System.out.println("- Endereço");
         System.out.println("- CEP");
         System.out.println("- Cidade");
@@ -184,7 +184,8 @@ public class Main { // cria a classe principal do programa, chamada main
 
         usuario.estadoCivil = estadoCivil;
 
-        if (estadoCivil.equalsIgnoreCase("casado")) {
+        if (estadoCivil.equalsIgnoreCase("casado") ||
+                estadoCivil.equalsIgnoreCase("casada")) {
 
             String conjuge = lerCampo(scanner, "Digite o nome do cônjuge: ");
 
@@ -193,11 +194,25 @@ public class Main { // cria a classe principal do programa, chamada main
                 return false;
             }
 
+            while (!validarNome(conjuge)) {
+
+                System.out.println("Nome do cônjuge inválido.");
+
+                conjuge = lerCampo(scanner, "Digite o nome do cônjuge: ");
+
+                if (conjuge == null) {
+                    System.out.println("Cadastro cancelado.");
+                    return false;
+                }
+            }
+
             usuario.conjuge = conjuge;
 
         } else {
+
             usuario.conjuge = "";
         }
+
         String endereco = lerCampo(scanner, "Digite o endereço: ");
 
         if (endereco == null) {
@@ -279,13 +294,29 @@ public class Main { // cria a classe principal do programa, chamada main
 
         System.out.println("\n===== USUÁRIOS =====");
 
+        if (usuarios.isEmpty()) {
+            System.out.println("Não existem usuários cadastrados.");
+            return;
+        }
+
         mostrarQuantidadeUsuarios(usuarios);
 
-        for (Usuario usuarioCadastrado : usuarios) { // para cada Usuario existente dentro da lista usuarios, coloque
-                                                     // temporariamente esse usuário na variável usuarioCadastrado
-            System.out.println("ID: " + usuarioCadastrado.id);
-            System.out.println("Nome: " + usuarioCadastrado.nome);
-            System.out.println("Idade: " + usuarioCadastrado.idade);
+        for (Usuario usuario : usuarios) {
+
+            System.out.println("\nID: " + usuario.id);
+            System.out.println("Nome: " + usuario.nome);
+            System.out.println("Data de nascimento: " + usuario.dataNascimento);
+            System.out.println("Idade: " + usuario.idade);
+            System.out.println("CPF: " + usuario.cpf);
+            System.out.println("Sexo: " + usuario.sexo);
+            System.out.println("Estado civil: " + usuario.estadoCivil);
+            System.out.println("Cônjuge: " + usuario.conjuge);
+            System.out.println("Endereço: " + usuario.endereco);
+            System.out.println("CEP: " + usuario.cep);
+            System.out.println("Cidade: " + usuario.cidade);
+            System.out.println("Estado: " + usuario.estado);
+            System.out.println("Complemento: " + usuario.complemento);
+            System.out.println("E-mail: " + usuario.email);
             System.out.println("--------------------");
         }
     }
@@ -293,6 +324,11 @@ public class Main { // cria a classe principal do programa, chamada main
     static void excluirUsuario(Scanner scanner, ArrayList<Usuario> usuarios) {
 
         System.out.println("\n===== EXCLUIR USUÁRIO =====");
+
+        if (usuarios.isEmpty()) {
+            System.out.println("Não existem usuários cadastrados.");
+            return;
+        }
 
         for (Usuario usuarioCadastrado : usuarios) {
             System.out.println("ID: " + usuarioCadastrado.id + ", Nome: " + usuarioCadastrado.nome);
@@ -339,6 +375,7 @@ public class Main { // cria a classe principal do programa, chamada main
             return;
         }
 
+        // Mostra os usuários disponíveis
         for (Usuario usuario : usuarios) {
             System.out.println("ID: " + usuario.id + ", Nome: " + usuario.nome);
         }
@@ -352,6 +389,7 @@ public class Main { // cria a classe principal do programa, chamada main
             return;
         }
 
+        // Procura o usuário
         Usuario usuarioEncontrado = null;
 
         for (Usuario usuario : usuarios) {
@@ -367,171 +405,347 @@ public class Main { // cria a classe principal do programa, chamada main
             return;
         }
 
-        System.out.println("\nUsuário encontrado: " + usuarioEncontrado.nome);
+        System.out.println("\nUsuário encontrado: ");
 
-        String nome = lerCampo(scanner, "Digite o novo nome: ");
+        // Mostra todas as informações do usuário
+        System.out.println("\n===== DADOS ATUAIS =====");
+        System.out.println("ID: " + usuarioEncontrado.id);
+        System.out.println("Nome: " + usuarioEncontrado.nome);
+        System.out.println("Data de nascimento: " + usuarioEncontrado.dataNascimento);
+        System.out.println("Idade: " + usuarioEncontrado.idade);
+        System.out.println("CPF: " + usuarioEncontrado.cpf);
+        System.out.println("Sexo: " + usuarioEncontrado.sexo);
+        System.out.println("Estado civil: " + usuarioEncontrado.estadoCivil);
+        System.out.println("Cônjuge: " + usuarioEncontrado.conjuge);
+        System.out.println("Endereço: " + usuarioEncontrado.endereco);
+        System.out.println("CEP: " + usuarioEncontrado.cep);
+        System.out.println("Cidade: " + usuarioEncontrado.cidade);
+        System.out.println("Estado: " + usuarioEncontrado.estado);
+        System.out.println("Complemento: " + usuarioEncontrado.complemento);
+        System.out.println("E-mail: " + usuarioEncontrado.email);
+        System.out.println("========================");
 
-        if (nome == null) {
-            System.out.println("Atualização cancelada.");
-            return;
-        }
+        System.out.println("\nDigite MANTER em qualquer campo para manter o valor atual.");
+        System.out.println("Digite SAIR em qualquer campo para cancelar toda a atualização.");
 
-        if (!validarNome(nome)) {
-            System.out.println("Nome inválido. Atualização cancelada.");
-            return;
-        }
+        // Cria uma cópia temporária
+        Usuario atualizado = new Usuario();
 
-        usuarioEncontrado.nome = nome;
+        atualizado.id = usuarioEncontrado.id;
+        atualizado.nome = usuarioEncontrado.nome;
+        atualizado.dataNascimento = usuarioEncontrado.dataNascimento;
+        atualizado.idade = usuarioEncontrado.idade;
+        atualizado.cpf = usuarioEncontrado.cpf;
+        atualizado.sexo = usuarioEncontrado.sexo;
+        atualizado.estadoCivil = usuarioEncontrado.estadoCivil;
+        atualizado.conjuge = usuarioEncontrado.conjuge;
+        atualizado.endereco = usuarioEncontrado.endereco;
+        atualizado.cep = usuarioEncontrado.cep;
+        atualizado.cidade = usuarioEncontrado.cidade;
+        atualizado.estado = usuarioEncontrado.estado;
+        atualizado.complemento = usuarioEncontrado.complemento;
+        atualizado.email = usuarioEncontrado.email;
 
-        String sexo = lerCampo(scanner, "Digite o novo sexo: ");
+        while (true) {
 
-        if (sexo == null) {
-            System.out.println("Atualização cancelada.");
-            return;
-        }
+            String nome = lerCampo(scanner, "Novo nome: ");
 
-        usuarioEncontrado.sexo = sexo;
-
-        String estadoCivil = lerCampo(scanner, "Digite o novo estado civil: ");
-
-        if (estadoCivil == null) {
-            System.out.println("Atualização cancelada.");
-            return;
-        }
-
-        usuarioEncontrado.estadoCivil = estadoCivil;
-
-        if (estadoCivil.equalsIgnoreCase("casado")) {
-
-            String conjuge = lerCampo(scanner, "Digite o novo nome do cônjuge: ");
-
-            if (conjuge == null) {
+            if (nome == null) {
                 System.out.println("Atualização cancelada.");
                 return;
             }
 
-            usuarioEncontrado.conjuge = conjuge;
+            if (nome.equalsIgnoreCase("MANTER")) {
+                break;
+            }
 
-        } else {
-            usuarioEncontrado.conjuge = "";
-        }
-        String endereco = lerCampo(scanner, "Digite o novo endereço: ");
+            if (validarNome(nome)) {
+                atualizado.nome = nome;
+                break;
+            }
 
-        if (endereco == null) {
-            System.out.println("Atualização cancelada.");
-            return;
-        }
-
-        usuarioEncontrado.endereco = endereco;
-
-        String cep = lerCampo(scanner, "Digite o novo CEP: ");
-
-        if (cep == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+            System.out.println("Nome inválido. Atualização cancelada.");
         }
 
-        if (!validarCep(cep)) {
-            System.out.println("CEP inválido. Atualização cancelada.");
-            return;
+        while (true) {
+
+            String dataNascimento = lerCampo(scanner, "Nova data de nascimento (dd/MM/aaaa): ");
+
+            if (dataNascimento == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (dataNascimento.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (validarDataNascimento(dataNascimento)) {
+
+                atualizado.dataNascimento = dataNascimento;
+                atualizado.idade = calcularIdade(dataNascimento);
+
+                break;
+            }
+
+            System.out.println("Data inválida. Digite novamente.");
         }
 
-        usuarioEncontrado.cep = cep;
+        while (true) {
 
-        String cidade = lerCampo(scanner, "Digite a nova cidade: ");
+            String cpf = lerCampo(scanner, "Novo CPF: ");
 
-        if (cidade == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+            if (cpf == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (cpf.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (!validarCpf(cpf)) {
+                System.out.println("CPF inválido. Digite novamente.");
+                continue;
+            }
+
+            if (cpfJaExisteEmOutroUsuario(cpf, usuarios, atualizado.id)) {
+                System.out.println("Este CPF já pertence a outro usuário.");
+                continue;
+            }
+
+            atualizado.cpf = cpf;
+            break;
         }
 
-        usuarioEncontrado.cidade = cidade;
+        while (true) {
 
-        String estado = lerCampo(scanner, "Digite o novo estado: ");
+            String sexo = lerCampo(scanner, "Novo sexo: ");
 
-        if (estado == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+            if (sexo == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (sexo.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (!sexo.trim().isEmpty()) {
+                atualizado.sexo = sexo;
+                break;
+            }
+
+            System.out.println("Sexo inválido. Digite novamente.");
         }
 
-        usuarioEncontrado.estado = estado;
+        while (true) {
 
-        String complemento = lerCampo(scanner, "Digite o novo complemento: ");
+            String estadoCivil = lerCampo(scanner, "Novo estado civil: ");
 
-        if (complemento == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+            if (estadoCivil == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (estadoCivil.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (!estadoCivil.trim().isEmpty()) {
+
+                atualizado.estadoCivil = estadoCivil;
+
+                // Se deixar de ser casado, não precisa de cônjuge
+                if (!estadoCivil.equalsIgnoreCase("casado") &&
+                        !estadoCivil.equalsIgnoreCase("casada")) {
+
+                    atualizado.conjuge = "";
+                }
+
+                break;
+            }
+
+            System.out.println("Estado civil inválido. Digite novamente.");
         }
 
-        usuarioEncontrado.complemento = complemento;
+        if (atualizado.estadoCivil.equalsIgnoreCase("casado") ||
+                atualizado.estadoCivil.equalsIgnoreCase("casada")) {
 
-        String email = lerCampo(scanner, "Digite o novo e-mail: ");
+            while (true) {
 
-        if (email == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+                String conjuge = lerCampo(scanner, "Novo nome do cônjuge: ");
+
+                if (conjuge == null) {
+                    System.out.println("Atualização cancelada.");
+                    return;
+                }
+
+                if (conjuge.equalsIgnoreCase("MANTER")) {
+                    break;
+                }
+
+                if (validarNome(conjuge)) {
+                    atualizado.conjuge = conjuge;
+                    break;
+                }
+
+                System.out.println("Nome inválido. Digite novamente.");
+            }
         }
 
-        if (!validarEmail(email)) {
-            System.out.println("E-mail inválido. Atualização cancelada.");
-            return;
+        while (true) {
+
+            String endereco = lerCampo(scanner, "Novo endereço: ");
+
+            if (endereco == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (endereco.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (!endereco.trim().isEmpty()) {
+                atualizado.endereco = endereco;
+                break;
+            }
+
+            System.out.println("Endereço inválido. Digite novamente.");
         }
 
-        usuarioEncontrado.email = email;
+        while (true) {
 
-        String dataNascimento = lerCampo(scanner, "Digite a nova data de nascimento (dd/MM/aaaa): ");
+            String cep = lerCampo(scanner, "Novo CEP: ");
 
-        if (dataNascimento == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+            if (cep == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (cep.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (validarCep(cep)) {
+                atualizado.cep = cep;
+                break;
+            }
+
+            System.out.println("CEP inválido. Digite novamente.");
         }
 
-        if (!validarDataNascimento(dataNascimento)) {
-            System.out.println("Data inválida. Atualização cancelada.");
-            return;
+        while (true) {
+
+            String cidade = lerCampo(scanner, "Nova cidade: ");
+
+            if (cidade == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (cidade.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (!cidade.trim().isEmpty()) {
+                atualizado.cidade = cidade;
+                break;
+            }
+
+            System.out.println("Cidade inválida. Digite novamente.");
         }
 
-        usuarioEncontrado.dataNascimento = dataNascimento;
-        usuarioEncontrado.idade = calcularIdade(dataNascimento);
+        while (true) {
 
-        String cpf = lerCampo(scanner, "Digite o novo CPF: ");
+            String estado = lerCampo(scanner, "Novo estado: ");
 
-        if (cpf == null) {
-            System.out.println("Atualização cancelada.");
-            return;
+            if (estado == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (estado.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (!estado.trim().isEmpty()) {
+                atualizado.estado = estado;
+                break;
+            }
+
+            System.out.println("Estado inválido. Digite novamente.");
         }
 
-        if (!validarCpf(cpf)) {
-            System.out.println("CPF inválido. Atualização cancelada.");
-            return;
+        while (true) {
+
+            String complemento = lerCampo(scanner, "Novo complemento: ");
+
+            if (complemento == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (complemento.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (!complemento.trim().isEmpty()) {
+                atualizado.complemento = complemento;
+                break;
+            }
+
+            System.out.println("Complemento inválido. Digite novamente.");
         }
 
-        if (cpfJaExisteEmOutroUsuario(cpf, usuarios, usuarioEncontrado.id)) {
-            System.out.println("Este CPF já pertence a outro usuário.");
-            return;
+        while (true) {
+
+            String email = lerCampo(scanner, "Novo e-mail: ");
+
+            if (email == null) {
+                System.out.println("Atualização cancelada.");
+                return;
+            }
+
+            if (email.equalsIgnoreCase("MANTER")) {
+                break;
+            }
+
+            if (validarEmail(email)) {
+                atualizado.email = email;
+                break;
+            }
+
+            System.out.println("E-mail inválido. Digite novamente.");
         }
 
-        usuarioEncontrado.cpf = cpf;
+        usuarioEncontrado.nome = atualizado.nome;
+        usuarioEncontrado.dataNascimento = atualizado.dataNascimento;
+        usuarioEncontrado.idade = atualizado.idade;
+        usuarioEncontrado.cpf = atualizado.cpf;
+        usuarioEncontrado.sexo = atualizado.sexo;
+        usuarioEncontrado.estadoCivil = atualizado.estadoCivil;
+        usuarioEncontrado.conjuge = atualizado.conjuge;
+        usuarioEncontrado.endereco = atualizado.endereco;
+        usuarioEncontrado.cep = atualizado.cep;
+        usuarioEncontrado.cidade = atualizado.cidade;
+        usuarioEncontrado.estado = atualizado.estado;
+        usuarioEncontrado.complemento = atualizado.complemento;
+        usuarioEncontrado.email = atualizado.email;
 
         System.out.println("Usuário atualizado com sucesso!");
     }
 
     static boolean validarNome(String nome) {
 
-        if (nome.trim().isEmpty()) { // isEmpty ve se ficou vazio
+        nome = nome.trim();
+
+        if (nome.isEmpty()) {
             return false;
         }
 
-        for (int i = 0; i < nome.length(); i++) { // percorrendo pelo nome inteiro
-
-            char caractere = nome.charAt(i); // pega o caractere dessa posição
-
-            if (!Character.isLetter(caractere) && caractere != ' ') {
-                return false;
-            }
-        }
-
-        return true;
+        return nome.matches("[\\p{L} ]+");
     }
 
     static boolean validarCpf(String cpf) {
@@ -614,6 +828,12 @@ public class Main { // cria a classe principal do programa, chamada main
 
     static boolean validarDataNascimento(String data) {
 
+        if (!data.contains("/")) {
+            System.out.println("A data deve ser digitada com barras.");
+            System.out.println("Exemplo: 18/05/2008");
+            return false;
+        }
+
         if (!data.matches("\\d{2}/\\d{2}/\\d{4}")) {
             return false;
         }
@@ -640,20 +860,30 @@ public class Main { // cria a classe principal do programa, chamada main
 
     static String lerCampo(Scanner scanner, String mensagem) {
 
-        System.out.print(mensagem);
-        String valor = scanner.nextLine();
+        while (true) {
 
-        if (valor.equals("SAIR")) {
+            System.out.print(mensagem);
+            String valor = scanner.nextLine();
 
-            System.out.print("Tem certeza que deseja sair do cadastro? (S/N): ");
-            String confirmacao = scanner.nextLine();
+            if (valor.equalsIgnoreCase("SAIR")) {
 
-            if (confirmacao.equalsIgnoreCase("S")) {
-                return null;
+                System.out.print("Tem certeza que deseja sair do cadastro? (S/N): ");
+                String confirmacao = scanner.nextLine();
+
+                if (confirmacao.equalsIgnoreCase("S")) {
+                    return null;
+                }
+
+                if (confirmacao.equalsIgnoreCase("N")) {
+                    continue;
+                }
+
+                System.out.println("Digite S para sim ou N para não.");
+                continue;
             }
-        }
 
-        return valor;
+            return valor;
+        }
     }
 
     static boolean validarCep(String cep) {
